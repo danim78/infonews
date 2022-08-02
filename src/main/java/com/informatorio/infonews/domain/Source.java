@@ -1,11 +1,10 @@
 package com.informatorio.infonews.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Source {
@@ -16,6 +15,9 @@ public class Source {
     private String name;
     private String code;
     private LocalDate createdAt;
+
+    @ManyToMany(mappedBy = "sources")
+    private Set<Article> articles = new HashSet<>();
 
     public Source(String name, String code, LocalDate createdAt) {
         this.name = name;
@@ -56,6 +58,10 @@ public class Source {
 
     public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<Article> getArticles() {
+        return articles;
     }
 
     @Override

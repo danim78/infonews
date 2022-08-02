@@ -2,7 +2,9 @@ package com.informatorio.infonews.domain;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Article {
@@ -21,7 +23,12 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     private Author author;
 
-    private String source;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "article_source",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "source_id"))
+    private Set<Source> sources = new HashSet<>();
 
     public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, Author author) {
         this.title = title;
@@ -97,6 +104,15 @@ public class Article {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public Set<Source> getSource() {
+        return sources;
+    }
+
+    public void addSource(Source source){
+        sources.add(source);
+        source.getArticles().add(this);
     }
 
     @Override
