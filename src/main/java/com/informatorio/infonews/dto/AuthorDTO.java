@@ -1,33 +1,27 @@
-package com.informatorio.infonews.domain;
+package com.informatorio.infonews.dto;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import com.informatorio.infonews.domain.Article;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-public class Author {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AuthorDTO {
     private Long id;
-
     private String firstName;
     private String lastName;
     private String fullName;
-    private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Article> articles = new ArrayList<>();
 
-    public Author(String firstName, String lastName, String fullName, LocalDate createdAt) {
+    public AuthorDTO(Long id, String firstName, String lastName, String fullName) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.fullName = fullName;
-        this.createdAt = createdAt;
     }
 
-    public Author() {
+    public AuthorDTO() {
     }
 
     public Long getId() {
@@ -62,43 +56,26 @@ public class Author {
         this.fullName = fullName;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public List<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return Objects.equals(id, author.id) && Objects.equals(firstName, author.firstName) && Objects.equals(lastName, author.lastName) && Objects.equals(fullName, author.fullName) && Objects.equals(createdAt, author.createdAt);
+        AuthorDTO authorDTO = (AuthorDTO) o;
+        return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName) && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, fullName, createdAt);
+        return Objects.hash(id, firstName, lastName, fullName);
     }
 
     @Override
     public String toString() {
-        return "Author{" +
+        return "AuthorDTO{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", createdAt=" + createdAt +
                 '}';
     }
 }

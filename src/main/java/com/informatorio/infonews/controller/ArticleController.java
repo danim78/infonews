@@ -1,7 +1,9 @@
 package com.informatorio.infonews.controller;
 
+import com.informatorio.infonews.converter.ArticleConverter;
 import com.informatorio.infonews.domain.Article;
 import com.informatorio.infonews.domain.Source;
+import com.informatorio.infonews.dto.ArticleDTO;
 import com.informatorio.infonews.repository.ArticleRepository;
 import com.informatorio.infonews.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ public class ArticleController {
 
     private final ArticleRepository articleRepository;
     private final SourceRepository sourceRepository;
+    private final ArticleConverter articleConverter;
 
     @Autowired
-    public ArticleController(ArticleRepository articleRepository, SourceRepository sourceRepository) {
+    public ArticleController(ArticleRepository articleRepository, SourceRepository sourceRepository, ArticleConverter articleConverter) {
         this.articleRepository = articleRepository;
         this.sourceRepository = sourceRepository;
+        this.articleConverter = articleConverter;
     }
 
     @PostMapping("/article")
@@ -32,7 +36,7 @@ public class ArticleController {
     }
 
     @PostMapping("/article/{idArticle}/source")
-    public Article addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds){
+    public ArticleDTO addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds){
        Article article = articleRepository.findById(idArticle).orElse(null);
        List<Source> sources = sourceIds.stream()
                .map(id -> sourceRepository.findById(id))
@@ -41,6 +45,6 @@ public class ArticleController {
                .collect(Collectors.toList());
        sources.forEach(source -> article.addSource(source));
        articleRepository.save(article);
-       return article;
+       return articleConverter.toDto(article);
     }
 }
