@@ -31,8 +31,10 @@ public class ArticleController {
     }
 
     @PostMapping("/article")
-    public Article createArticle(@RequestBody Article article){
-        return articleRepository.save(article);
+    public ArticleDTO createArticle(@RequestBody ArticleDTO articleDTO){
+        Article article = articleConverter.toEntity(articleDTO);
+        article = articleRepository.save(article);
+        return articleConverter.toDto(article);
     }
 
     @PostMapping("/article/{idArticle}/source")

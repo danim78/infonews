@@ -2,9 +2,7 @@ package com.informatorio.infonews.domain;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Author {
@@ -18,7 +16,7 @@ public class Author {
     private LocalDate createdAt;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Article> articles = new ArrayList<>();
+    private Set<Article> articles = new HashSet<>();
 
     public Author(String firstName, String lastName, String fullName, LocalDate createdAt) {
         this.firstName = firstName;
@@ -70,11 +68,11 @@ public class Author {
         this.createdAt = createdAt;
     }
 
-    public List<Article> getArticles() {
+    public Set<Article> getArticles() {
         return articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
 

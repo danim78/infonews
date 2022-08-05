@@ -1,7 +1,5 @@
 package com.informatorio.infonews.dto;
 
-import com.informatorio.infonews.dto.AuthorDTO;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -111,12 +109,12 @@ public class ArticleDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArticleDTO that = (ArticleDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(url, that.url) && Objects.equals(urlToImage, that.urlToImage) && Objects.equals(publishedAt, that.publishedAt) && Objects.equals(content, that.content);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(url, that.url) && Objects.equals(urlToImage, that.urlToImage) && Objects.equals(publishedAt, that.publishedAt) && Objects.equals(content, that.content) && Objects.equals(author, that.author) && Objects.equals(sources, that.sources);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, url, urlToImage, publishedAt, content);
+        return Objects.hash(id, title, description, url, urlToImage, publishedAt, content, author, sources);
     }
 
     @Override

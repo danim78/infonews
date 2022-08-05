@@ -1,9 +1,14 @@
 package com.informatorio.infonews.converter;
 
 import com.informatorio.infonews.domain.Article;
+import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.ArticleDTO;
+import com.informatorio.infonews.dto.SourceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class ArticleConverter {
@@ -27,5 +32,27 @@ public class ArticleConverter {
                 article.getContent(),
                 authorConverter.toDto(article.getAuthor()),
                 sourceConverter.toDto(article.getSource()));
+    }
+
+    public Set<ArticleDTO> toDto(Set<Article> articles) {
+        return articles.stream()
+                .map(article -> toDto(article))
+                .collect(Collectors.toSet());
+    }
+
+    public Article toEntity(ArticleDTO articleDTO){
+        return new Article(articleDTO.getTitle(),
+                articleDTO.getDescription(),
+                articleDTO.getUrl(),
+                articleDTO.getUrlToImage(),
+                articleDTO.getPublishedAt(),
+                articleDTO.getContent(),
+                authorConverter.toEntity(articleDTO.getAuthor()));
+    }
+
+    public Set<Article> toEntity(Set<ArticleDTO> articlesDTO){
+        return articlesDTO.stream()
+                .map(articleDTO -> toEntity(articleDTO))
+                .collect(Collectors.toSet());
     }
 }

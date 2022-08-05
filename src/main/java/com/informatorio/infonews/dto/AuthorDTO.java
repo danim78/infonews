@@ -1,24 +1,25 @@
 package com.informatorio.infonews.dto;
 
-import com.informatorio.infonews.domain.Article;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class AuthorDTO {
     private Long id;
     private String firstName;
     private String lastName;
     private String fullName;
+    private LocalDate createdAt;
 
-    private List<Article> articles = new ArrayList<>();
+    private Set<ArticleDTO> articles = new HashSet<>();
 
-    public AuthorDTO(Long id, String firstName, String lastName, String fullName) {
+    public AuthorDTO(Long id, String firstName, String lastName, String fullName, LocalDate createdAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.fullName = fullName;
+        this.createdAt = createdAt;
     }
 
     public AuthorDTO() {
@@ -56,17 +57,25 @@ public class AuthorDTO {
         this.fullName = fullName;
     }
 
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuthorDTO authorDTO = (AuthorDTO) o;
-        return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName) && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName);
+        return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName) && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName) && Objects.equals(createdAt, authorDTO.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, fullName);
+        return Objects.hash(id, firstName, lastName, fullName, createdAt);
     }
 
     @Override
@@ -76,6 +85,7 @@ public class AuthorDTO {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", fullName='" + fullName + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 '}';
     }
 }

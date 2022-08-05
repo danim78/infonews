@@ -13,9 +13,9 @@ public class SourceDTO {
     private String code;
     private LocalDate createdAt;
 
-    private Set<Article> articles = new HashSet<>();
+    private Set<ArticleDTO> articles = new HashSet<>();
 
-    public SourceDTO(Long id, String name, String code, LocalDate createdAt, Set<Article> articles) {
+    public SourceDTO(Long id, String name, String code, LocalDate createdAt) {
         this.id = id;
         this.name = name;
         this.code = code;
