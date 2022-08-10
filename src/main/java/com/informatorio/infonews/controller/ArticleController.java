@@ -7,11 +7,14 @@ import com.informatorio.infonews.dto.ArticleDTO;
 import com.informatorio.infonews.repository.ArticleRepository;
 import com.informatorio.infonews.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,14 +34,14 @@ public class ArticleController {
     }
 
     @PostMapping("/article")
-    public ArticleDTO createArticle(@RequestBody ArticleDTO articleDTO){
+    public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO){
         Article article = articleConverter.toEntity(articleDTO);
         article = articleRepository.save(article);
-        return articleConverter.toDto(article);
+        return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
     }
 
     @PostMapping("/article/{idArticle}/source")
-    public ArticleDTO addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds){
+    public ResponseEntity<?> addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds){
        Article article = articleRepository.findById(idArticle).orElse(null);
        List<Source> sources = sourceIds.stream()
                .map(id -> sourceRepository.findById(id))
@@ -47,6 +50,6 @@ public class ArticleController {
                .collect(Collectors.toList());
        sources.forEach(source -> article.addSource(source));
        articleRepository.save(article);
-       return articleConverter.toDto(article);
+       return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
     }
 }

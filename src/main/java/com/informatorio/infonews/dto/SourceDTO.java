@@ -1,7 +1,7 @@
 package com.informatorio.infonews.dto;
 
-import com.informatorio.infonews.domain.Article;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -9,16 +9,17 @@ import java.util.Set;
 
 public class SourceDTO {
     private Long id;
+    @NotBlank
     private String name;
     private String code;
-    private LocalDate createdAt;
+    private LocalDate createdAt = LocalDate.now();
 
     private Set<ArticleDTO> articles = new HashSet<>();
 
     public SourceDTO(Long id, String name, String code, LocalDate createdAt) {
         this.id = id;
         this.name = name;
-        this.code = code;
+        setCode();
         this.createdAt = createdAt;
     }
 
@@ -39,14 +40,15 @@ public class SourceDTO {
 
     public void setName(String name) {
         this.name = name;
+        setCode();
     }
 
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCode() {
+        this.code = this.name.toLowerCase().trim().replace(" ", "-");
     }
 
     public LocalDate getCreatedAt() {
@@ -62,7 +64,8 @@ public class SourceDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SourceDTO sourceDTO = (SourceDTO) o;
-        return Objects.equals(id, sourceDTO.id) && Objects.equals(name, sourceDTO.name) && Objects.equals(code, sourceDTO.code) && Objects.equals(createdAt, sourceDTO.createdAt);
+        return Objects.equals(id, sourceDTO.id) && Objects.equals(name, sourceDTO.name)
+                && Objects.equals(code, sourceDTO.code) && Objects.equals(createdAt, sourceDTO.createdAt);
     }
 
     @Override

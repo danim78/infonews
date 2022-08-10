@@ -1,5 +1,8 @@
 package com.informatorio.infonews.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -7,17 +10,27 @@ import java.util.Set;
 
 public class ArticleDTO {
     private Long id;
+    @NotBlank
+    @Size(min = 3, max = 100)
     private String title;
+    @NotBlank
+    @Size(min = 3, max = 150)
     private String description;
+    @NotBlank
+    @Pattern(regexp = "(?:https?:\\/\\/|[\\w.-])[-a-zA-Z0-9+&@#/%?=~_|!:.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String url;
     private String urlToImage;
     private LocalDate publishedAt;
+    @NotBlank
+    @Size(min = 200)
     private String content;
+    @NotBlank
     private AuthorDTO author;
 
     private Set<SourceDTO> sources = new HashSet<>();
 
-    public ArticleDTO(Long id, String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, AuthorDTO author, Set<SourceDTO> sources) {
+    public ArticleDTO(Long id, String title, String description, String url, String urlToImage, LocalDate publishedAt,
+                      String content, AuthorDTO author, Set<SourceDTO> sources) {
         this.id = id;
         this.title = title;
         this.description = description;

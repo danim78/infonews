@@ -5,6 +5,7 @@ import com.informatorio.infonews.dto.AuthorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,22 +19,23 @@ public class AuthorConverter {
                 author.getCreatedAt());
     }
 
-    public Set<AuthorDTO> toDto(Set <Author> authors){
+    public List<AuthorDTO> toDto(List <Author> authors){
         return authors.stream()
                 .map(author -> toDto(author))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public Author toEntity(AuthorDTO authorDTO){
-        return new Author(authorDTO.getFirstName(),
+        return new Author(authorDTO.getId(),
+                authorDTO.getFirstName(),
                 authorDTO.getLastName(),
                 authorDTO.getFullName(),
                 authorDTO.getCreatedAt());
     }
 
-    public Set<Author> toEntity(Set<AuthorDTO> authorsDTO){
+    public List<Author> toEntity(List<AuthorDTO> authorsDTO){
         return authorsDTO.stream()
                 .map(authorDTO -> toEntity(authorDTO))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     };
 }

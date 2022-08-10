@@ -5,9 +5,12 @@ import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.SourceDTO;
 import com.informatorio.infonews.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class SourceController {
@@ -22,9 +25,19 @@ public class SourceController {
     }
 
     @PostMapping("/source")
-    public SourceDTO createSource(@RequestBody SourceDTO sourceDTO){
+    public ResponseEntity<?> createSource(@RequestBody @Valid SourceDTO sourceDTO){
         Source source = sourceConverter.toEntity(sourceDTO);
         source = sourceRepository.save(source);
-        return sourceConverter.toDto(source);
+        return new ResponseEntity<>(sourceConverter.toDto(source), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/source/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id){
+        Optional<Source> source = sourceRepository.findById(id);
+        if (source.isPresent()){
+            return new ResponseEntity<>(sourceConverter.toDto(source.get()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

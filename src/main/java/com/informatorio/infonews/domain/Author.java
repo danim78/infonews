@@ -9,7 +9,6 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String firstName;
     private String lastName;
     private String fullName;
@@ -19,6 +18,14 @@ public class Author {
     private Set<Article> articles = new HashSet<>();
 
     public Author(String firstName, String lastName, String fullName, LocalDate createdAt) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fullName = fullName;
+        this.createdAt = createdAt;
+    }
+
+    public Author(Long id, String firstName, String lastName, String fullName, LocalDate createdAt) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.fullName = fullName;

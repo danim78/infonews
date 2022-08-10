@@ -1,5 +1,6 @@
 package com.informatorio.infonews.dto;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -7,10 +8,12 @@ import java.util.Set;
 
 public class AuthorDTO {
     private Long id;
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
     private String fullName;
-    private LocalDate createdAt;
+    private LocalDate createdAt = LocalDate.now();
 
     private Set<ArticleDTO> articles = new HashSet<>();
 
@@ -18,7 +21,7 @@ public class AuthorDTO {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.fullName = fullName;
+        setFullName();
         this.createdAt = createdAt;
     }
 
@@ -39,6 +42,7 @@ public class AuthorDTO {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+        setFullName();
     }
 
     public String getLastName() {
@@ -47,14 +51,15 @@ public class AuthorDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        setFullName();
     }
 
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFullName() {
+        this.fullName = this.firstName + " " + this.lastName;
     }
 
     public LocalDate getCreatedAt() {
@@ -70,7 +75,9 @@ public class AuthorDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuthorDTO authorDTO = (AuthorDTO) o;
-        return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName) && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName) && Objects.equals(createdAt, authorDTO.createdAt);
+        return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName)
+                && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName)
+                && Objects.equals(createdAt, authorDTO.createdAt);
     }
 
     @Override
