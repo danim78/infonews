@@ -54,6 +54,22 @@ public class AuthorController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    //MODIFICACIÓN
+    @PutMapping("/author/{id}/modify")
+    public ResponseEntity<?> modifyById(@PathVariable Long id, @RequestBody @Valid AuthorDTO authorDTO){
+        Optional<Author> wantedAuthor = authorRepository.findById(id);
+        if (wantedAuthor.isPresent()){
+            Author authorToModify = wantedAuthor.get();
+            Author author = authorConverter.toEntity(authorDTO);
+            authorToModify.setFirstName(author.getFirstName());
+            authorToModify.setLastName(author.getLastName());
+            authorToModify.setFullName(author.getFullName());
+            author = authorRepository.save(authorToModify);
+            return new ResponseEntity<>(authorConverter.toDto(author), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
     //BUSCAR AUTOR POR ID
     @GetMapping("/author/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
