@@ -4,9 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class ArticleDTO {
     private Long id;
@@ -27,10 +25,10 @@ public class ArticleDTO {
     @NotBlank
     private AuthorDTO author;
 
-    private Set<SourceDTO> sources = new HashSet<>();
+    private List<SourceDTO> sources = new ArrayList<>();
 
     public ArticleDTO(Long id, String title, String description, String url, String urlToImage, LocalDate publishedAt,
-                      String content, AuthorDTO author, Set<SourceDTO> sources) {
+                      String content, AuthorDTO author, List<SourceDTO> sources) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -109,11 +107,11 @@ public class ArticleDTO {
         this.author = author;
     }
 
-    public Set<SourceDTO> getSources() {
+    public List<SourceDTO> getSources() {
         return sources;
     }
 
-    public void setSources(Set<SourceDTO> sources) {
+    public void setSources(List<SourceDTO> sources) {
         this.sources = sources;
     }
 

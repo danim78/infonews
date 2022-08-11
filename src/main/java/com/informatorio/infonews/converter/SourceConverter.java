@@ -5,6 +5,7 @@ import com.informatorio.infonews.dto.SourceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,10 @@ public class SourceConverter {
                 source.getCreatedAt());
     }
 
-    public Set<SourceDTO> toDto(Set<Source> sources){
+    public List<SourceDTO> toDto(List<Source> sources){
         return sources.stream()
                 .map(source -> toDto(source))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public Source toEntity(SourceDTO sourceDTO){
@@ -30,9 +31,9 @@ public class SourceConverter {
                 sourceDTO.getCreatedAt());
     }
 
-    public Set<Source> toEntity(Set<SourceDTO> sourcesDTO){
+    public List<Source> toEntity(List<SourceDTO> sourcesDTO){
         return sourcesDTO.stream()
                 .map(sourceDTO -> toEntity(sourceDTO))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

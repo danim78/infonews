@@ -2,9 +2,7 @@ package com.informatorio.infonews.domain;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Article {
@@ -28,7 +26,7 @@ public class Article {
             name = "article_source",
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "source_id"))
-    private Set<Source> sources = new HashSet<>();
+    private List<Source> sources = new ArrayList<>();
 
     public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, Author author) {
         this.title = title;
@@ -107,7 +105,7 @@ public class Article {
         this.author = author;
     }
 
-    public Set<Source> getSource() {
+    public List<Source> getSource() {
         return sources;
     }
 
