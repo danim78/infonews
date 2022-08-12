@@ -4,8 +4,12 @@ import com.informatorio.infonews.converter.AuthorConverter;
 import com.informatorio.infonews.domain.Author;
 import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.AuthorDTO;
+import com.informatorio.infonews.dto.AuthorPageDTO;
 import com.informatorio.infonews.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Date;
@@ -82,9 +88,21 @@ public class AuthorController {
     }
     //OBTENER TODOS LOS AUTORES
     @GetMapping("/author/all")
-    public ResponseEntity<?> findAll(){
-        List<Author> authors = authorRepository.findAll();
-        return new ResponseEntity<>(authorConverter.toDto(authors), HttpStatus.OK);
+    public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0") @PositiveOrZero int page,
+                                     @RequestParam(defaultValue = "5") @Positive int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Author> authorPage = authorRepository.findAll(pageable);
+        List<AuthorDTO> authorsPageDTO = authorPage.stream()
+                .map(author -> authorConverter.toDto(author))
+                .toList();
+        AuthorPageDTO authorPageDTO = new AuthorPageDTO(authorPage.getNumber(),
+                authorPage.getSize(),
+                authorPage.getTotalElements(),
+                authorPage.getTotalPages(),
+                authorsPageDTO);
+        //List<Author> authors = authorRepository.findAll();
+        //return new ResponseEntity<>(authorConverter.toDto(authors), HttpStatus.OK);
+        return new ResponseEntity<>(authorPageDTO, HttpStatus.OK);
     }
     //OBTENER LOS AUTORES CREADOS DESDE UNA FECHA DADA
     @GetMapping("/author/all/since")
