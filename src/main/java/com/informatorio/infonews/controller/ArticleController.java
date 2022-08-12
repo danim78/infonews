@@ -107,7 +107,7 @@ public class ArticleController {
             @RequestParam(required = false) @Size(min = 3, max = 20) String q) {
         if (q != null) {
             List<Article> articles = articleRepository
-                    .findByPublishedAtIsNotNullAndTitleContainingOrDescriptionContainingOrContentContainingOrAuthorFullNameContaining(q, q, q,
+                    .findByPublishedAtIsNotNullAndTitleContainingOrPublishedAtIsNotNullAndDescriptionContainingOrPublishedAtIsNotNullAndContentContainingOrPublishedAtIsNotNullAndAuthorFullNameContaining(q, q, q,
                             q);
 
             List<ArticleDTO> articleDTO = articles.stream()
