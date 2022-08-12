@@ -121,8 +121,8 @@ public class AuthorController {
     }
     //OBTENER LOS AUTORES CUYO FULLNAME CONTENGAN UN STRING
     @GetMapping("/author/all/fullname")
-    public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 3, max = 20) String str){
-        List<Author> authors = authorRepository.findByFullNameContaining(str);
+    public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 3, max = 20) String q){
+        List<Author> authors = authorRepository.findByFullNameContaining(q);
         if(authors.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
