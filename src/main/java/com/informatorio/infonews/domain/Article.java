@@ -38,6 +38,17 @@ public class Article {
         this.author = author;
     }
 
+    public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, Author author, List<Source> sources) {
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.urlToImage = urlToImage;
+        this.publishedAt = publishedAt;
+        this.content = content;
+        this.author = author;
+        this.sources = sources;
+    }
+
     public Article() {
     }
 
@@ -112,6 +123,10 @@ public class Article {
     public void addSource(Source source){
         sources.add(source);
         source.getArticles().add(this);
+    }
+
+    public void setSources(List<Source> sources) {
+        this.sources = sources;
     }
 
     @Override
