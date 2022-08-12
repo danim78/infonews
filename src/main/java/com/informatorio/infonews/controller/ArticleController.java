@@ -66,7 +66,7 @@ public class ArticleController {
             articleToModify.setUrlToImage(article.getUrlToImage());
             articleToModify.setContent(article.getContent());
             articleToModify.setAuthor(article.getAuthor());
-            // articleToModify.setSources(article.getSources());
+            articleToModify.setSources(article.getSource());
             article = articleRepository.save(articleToModify);
             return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
         } else {

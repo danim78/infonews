@@ -48,7 +48,8 @@ public class ArticleConverter {
                 articleDTO.getUrlToImage(),
                 articleDTO.getPublishedAt(),
                 articleDTO.getContent(),
-                authorConverter.toEntity(articleDTO.getAuthor()));
+                authorConverter.toEntity(articleDTO.getAuthor()),
+                sourceConverter.toEntity(articleDTO.getSources()));
     }
 
     public List<Article> toEntity(List<ArticleDTO> articlesDTO){
