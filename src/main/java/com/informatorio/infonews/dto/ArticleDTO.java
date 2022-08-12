@@ -22,7 +22,6 @@ public class ArticleDTO {
     @NotBlank
     @Size(min = 200)
     private String content;
-
     private AuthorDTO author;
 
     private List<SourceDTO> sources = new ArrayList<>();
