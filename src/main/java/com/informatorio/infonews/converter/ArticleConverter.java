@@ -1,14 +1,10 @@
 package com.informatorio.infonews.converter;
 
 import com.informatorio.infonews.domain.Article;
-import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.ArticleDTO;
-import com.informatorio.infonews.dto.SourceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,12 +14,12 @@ public class ArticleConverter {
     private final SourceConverter sourceConverter;
 
     @Autowired
-    public ArticleConverter(AuthorConverter authorConverter,SourceConverter sourceConverter) {
+    public ArticleConverter(AuthorConverter authorConverter, SourceConverter sourceConverter) {
         this.authorConverter = authorConverter;
         this.sourceConverter = sourceConverter;
     }
 
-    public ArticleDTO toDto(Article article){
+    public ArticleDTO toDto(Article article) {
         return new ArticleDTO(article.getId(),
                 article.getTitle(),
                 article.getDescription(),
@@ -41,7 +37,7 @@ public class ArticleConverter {
                 .collect(Collectors.toList());
     }
 
-    public Article toEntity(ArticleDTO articleDTO){
+    public Article toEntity(ArticleDTO articleDTO) {
         return new Article(articleDTO.getTitle(),
                 articleDTO.getDescription(),
                 articleDTO.getUrl(),
@@ -52,7 +48,7 @@ public class ArticleConverter {
                 sourceConverter.toEntity(articleDTO.getSources()));
     }
 
-    public List<Article> toEntity(List<ArticleDTO> articlesDTO){
+    public List<Article> toEntity(List<ArticleDTO> articlesDTO) {
         return articlesDTO.stream()
                 .map(articleDTO -> toEntity(articleDTO))
                 .collect(Collectors.toList());

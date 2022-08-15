@@ -1,7 +1,6 @@
 package com.informatorio.infonews.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -61,8 +60,10 @@ public class SourceDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SourceDTO sourceDTO = (SourceDTO) o;
         return Objects.equals(id, sourceDTO.id) && Objects.equals(name, sourceDTO.name)
                 && Objects.equals(code, sourceDTO.code) && Objects.equals(createdAt, sourceDTO.createdAt);

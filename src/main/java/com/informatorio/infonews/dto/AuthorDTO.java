@@ -72,8 +72,10 @@ public class AuthorDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         AuthorDTO authorDTO = (AuthorDTO) o;
         return Objects.equals(id, authorDTO.id) && Objects.equals(firstName, authorDTO.firstName)
                 && Objects.equals(lastName, authorDTO.lastName) && Objects.equals(fullName, authorDTO.fullName)

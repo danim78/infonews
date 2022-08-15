@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     List<Author> findByCreatedAtGreaterThanEqual(LocalDate date);
+
     List<Author> findByFullNameContaining(String str);
 }

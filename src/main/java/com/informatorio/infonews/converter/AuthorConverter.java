@@ -3,13 +3,13 @@ package com.informatorio.infonews.converter;
 import com.informatorio.infonews.domain.Author;
 import com.informatorio.infonews.dto.AuthorDTO;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class AuthorConverter {
-    public AuthorDTO toDto(Author author){
+
+    public AuthorDTO toDto(Author author) {
         return new AuthorDTO(author.getId(),
                 author.getFirstName(),
                 author.getLastName(),
@@ -17,13 +17,13 @@ public class AuthorConverter {
                 author.getCreatedAt());
     }
 
-    public List<AuthorDTO> toDto(List <Author> authors){
+    public List<AuthorDTO> toDto(List<Author> authors) {
         return authors.stream()
                 .map(author -> toDto(author))
                 .collect(Collectors.toList());
     }
 
-    public Author toEntity(AuthorDTO authorDTO){
+    public Author toEntity(AuthorDTO authorDTO) {
         return new Author(authorDTO.getId(),
                 authorDTO.getFirstName(),
                 authorDTO.getLastName(),
@@ -31,7 +31,7 @@ public class AuthorConverter {
                 authorDTO.getCreatedAt());
     }
 
-    public List<Author> toEntity(List<AuthorDTO> authorsDTO){
+    public List<Author> toEntity(List<AuthorDTO> authorsDTO) {
         return authorsDTO.stream()
                 .map(authorDTO -> toEntity(authorDTO))
                 .collect(Collectors.toList());

@@ -68,10 +68,13 @@ public class Source {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Source source = (Source) o;
-        return Objects.equals(id, source.id) && Objects.equals(name, source.name) && Objects.equals(code, source.code) && Objects.equals(createdAt, source.createdAt);
+        return Objects.equals(id, source.id) && Objects.equals(name, source.name) && Objects.equals(code, source.code)
+                && Objects.equals(createdAt, source.createdAt);
     }
 
     @Override

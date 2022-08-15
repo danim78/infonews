@@ -27,7 +27,7 @@ public class ArticleDTO {
     private List<SourceDTO> sources = new ArrayList<>();
 
     public ArticleDTO(Long id, String title, String description, String url, String urlToImage, LocalDate publishedAt,
-                      String content, AuthorDTO author, List<SourceDTO> sources) {
+            String content, AuthorDTO author, List<SourceDTO> sources) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -116,10 +116,16 @@ public class ArticleDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ArticleDTO that = (ArticleDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(url, that.url) && Objects.equals(urlToImage, that.urlToImage) && Objects.equals(publishedAt, that.publishedAt) && Objects.equals(content, that.content) && Objects.equals(author, that.author) && Objects.equals(sources, that.sources);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title)
+                && Objects.equals(description, that.description) && Objects.equals(url, that.url)
+                && Objects.equals(urlToImage, that.urlToImage) && Objects.equals(publishedAt, that.publishedAt)
+                && Objects.equals(content, that.content) && Objects.equals(author, that.author)
+                && Objects.equals(sources, that.sources);
     }
 
     @Override

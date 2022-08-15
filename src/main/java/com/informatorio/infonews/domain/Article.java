@@ -21,14 +21,12 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Author author;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "article_source",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "source_id"))
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @JoinTable(name = "article_source", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "source_id"))
     private List<Source> sources = new ArrayList<>();
 
-    public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, Author author) {
+    public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt,
+            String content, Author author) {
         this.title = title;
         this.description = description;
         this.url = url;
@@ -38,7 +36,8 @@ public class Article {
         this.author = author;
     }
 
-    public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt, String content, Author author, List<Source> sources) {
+    public Article(String title, String description, String url, String urlToImage, LocalDate publishedAt,
+            String content, Author author, List<Source> sources) {
         this.title = title;
         this.description = description;
         this.url = url;
@@ -120,7 +119,7 @@ public class Article {
         return sources;
     }
 
-    public void addSource(Source source){
+    public void addSource(Source source) {
         sources.add(source);
         source.getArticles().add(this);
     }
@@ -131,10 +130,15 @@ public class Article {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Article article = (Article) o;
-        return Objects.equals(id, article.id) && Objects.equals(title, article.title) && Objects.equals(description, article.description) && Objects.equals(url, article.url) && Objects.equals(urlToImage, article.urlToImage) && Objects.equals(publishedAt, article.publishedAt) && Objects.equals(content, article.content);
+        return Objects.equals(id, article.id) && Objects.equals(title, article.title)
+                && Objects.equals(description, article.description) && Objects.equals(url, article.url)
+                && Objects.equals(urlToImage, article.urlToImage) && Objects.equals(publishedAt, article.publishedAt)
+                && Objects.equals(content, article.content);
     }
 
     @Override

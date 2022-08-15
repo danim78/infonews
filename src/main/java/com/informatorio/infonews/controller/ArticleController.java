@@ -4,11 +4,15 @@ import com.informatorio.infonews.converter.ArticleConverter;
 import com.informatorio.infonews.domain.Article;
 import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.ArticleDTO;
+import com.informatorio.infonews.dto.ArticlePageDTO;
 import com.informatorio.infonews.repository.ArticleRepository;
 import com.informatorio.infonews.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +20,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,49 +98,61 @@ public class ArticleController {
         return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
     }
 
-    // OBTENER TODOS LOS ARTICULOS PUBLICADOS
-    // @GetMapping("/article/all")
-    // public ResponseEntity<?> findAllPublished(){
-    // List<Article> articles = articleRepository.findAllByPublishedAtIsNotNull();
-    // return new ResponseEntity<>(articleConverter.toDto(articles),
-    // HttpStatus.ACCEPTED);
-    // }
-    // OBTENER TODOS LOS ARTICULOS PUBLICADOS QUE CONTENGAN STRING
+    // OBTENER TODOS LOS ARTICULOS PUBLICADOS O QUE CONTENGAN STRING
     @GetMapping("/article/all")
     public ResponseEntity<?> findByTitleOrDescriptionOrContentOrFullName(
-            @RequestParam(required = false) @Size(min = 3, max = 20) String q) {
+            @RequestParam(required = false) @Size(min = 3, max = 20) String q,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(defaultValue = "1") @Positive int size) {
+        Pageable pageable = PageRequest.of(page, size);
         if (q != null) {
-            List<Article> articles = articleRepository
-                    .findByPublishedAtIsNotNullAndTitleContainingOrPublishedAtIsNotNullAndDescriptionContainingOrPublishedAtIsNotNullAndContentContainingOrPublishedAtIsNotNullAndAuthorFullNameContaining(q, q, q,
-                            q);
+            Page<Article> articlePage = articleRepository
+                    .findByPublishedAtIsNotNullAndTitleContainingOrPublishedAtIsNotNullAndDescriptionContainingOrPublishedAtIsNotNullAndContentContainingOrPublishedAtIsNotNullAndAuthorFullNameContaining(
+                            q, q, q,
+                            q, pageable);
 
-            List<ArticleDTO> articleDTO = articles.stream()
+            List<ArticleDTO> articlesPageDTO = articlePage.stream()
                     .map(article -> articleConverter.toDto(article))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(articleDTO, HttpStatus.OK);
-        } else { 
-            List<Article> articles = articleRepository.findAllByPublishedAtIsNotNull();
-            return new ResponseEntity<>(articleConverter.toDto(articles), HttpStatus.ACCEPTED);
+                    .toList();
+            ArticlePageDTO articlePageDTO = new ArticlePageDTO(
+                    articlePage.getNumber(),
+                    articlePage.getSize(),
+                    articlePage.getTotalElements(),
+                    articlePage.getTotalPages(),
+                    articlesPageDTO);
+            return new ResponseEntity<>(articlePageDTO, HttpStatus.OK);
+        } else {
+            Page<Article> articlePage = articleRepository.findAllByPublishedAtIsNotNull(pageable);
+            List<ArticleDTO> articlesPageDTO = articlePage.stream()
+                    .map(article -> articleConverter.toDto(article))
+                    .toList();
+            ArticlePageDTO articlePageDTO = new ArticlePageDTO(articlePage.getNumber(),
+                    articlePage.getSize(),
+                    articlePage.getTotalElements(),
+                    articlePage.getTotalPages(),
+                    articlesPageDTO);
+
+            return new ResponseEntity<>(articlePageDTO, HttpStatus.OK);
         }
-
-        // List<Article> articlesPublished =
-        // articleRepository.findAllByPublishedAtIsNotNull();
-        // List<Article> articles =
-        // articleRepository.findByTitleContainingOrDescriptionContainingOrContentContainingOrAuthorFullNameContaining(q,
-        // q, q, q);
-
-        // List<ArticleDTO> articleDTO = articles.stream()
-        // .map(article -> articleConverter.toDto(article))
-        // .collect(Collectors.toList());
-        // return new ResponseEntity<>(articleDTO, HttpStatus.OK);
-
-        // if(articles.publishedAt.isEmpty()) {
-        // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        // } else {
-        // List<AuthorDTO> authorsDTO = authors.stream().
-        // map(author -> authorConverter.toDto(author))
-        // .collect(Collectors.toList());
-        // return new ResponseEntity<>(authorsDTO, HttpStatus.OK);
+        // // OBTENER TODOS LOS AUTORES
+        // @GetMapping("/author/all")
+        // public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0")
+        // @PositiveOrZero int page,
+        // @RequestParam(defaultValue = "5") @Positive int size) {
+        // Pageable pageable = PageRequest.of(page, size);
+        // Page<Author> authorPage = authorRepository.findAll(pageable);
+        // List<AuthorDTO> authorsPageDTO = authorPage.stream()
+        // .map(author -> authorConverter.toDto(author))
+        // .toList();
+        // AuthorPageDTO authorPageDTO = new AuthorPageDTO(authorPage.getNumber(),
+        // authorPage.getSize(),
+        // authorPage.getTotalElements(),
+        // authorPage.getTotalPages(),
+        // authorsPageDTO);
+        // // List<Author> authors = authorRepository.findAll();
+        // // return new ResponseEntity<>(authorConverter.toDto(authors),
+        // HttpStatus.OK);
+        // return new ResponseEntity<>(authorPageDTO, HttpStatus.OK);
         // }
     }
 }
