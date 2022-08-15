@@ -40,9 +40,14 @@ public class AuthorController {
     // ALTA
     @PostMapping("/author")
     public ResponseEntity<?> createAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
-        Author author = authorConverter.toEntity(authorDTO);
-        author = authorRepository.save(author);
-        return new ResponseEntity<>(authorConverter.toDto(author), HttpStatus.CREATED);
+        Optional<Author> wantedAuthor = authorRepository.findByFullName(authorDTO.getFullName());
+        if (wantedAuthor.isPresent()) {
+            return new ResponseEntity<>(authorConverter.toDto(wantedAuthor.get()), HttpStatus.OK);
+        } else {
+            Author newAuthor = authorConverter.toEntity(authorDTO);
+            newAuthor = authorRepository.save(newAuthor);
+            return new ResponseEntity<>(authorConverter.toDto(newAuthor), HttpStatus.CREATED);
+        }
     }
 
     // BAJA

@@ -31,10 +31,24 @@ public class SourceController {
     // ALTA
     @PostMapping("/source")
     public ResponseEntity<?> createSource(@RequestBody @Valid SourceDTO sourceDTO) {
-        Source source = sourceConverter.toEntity(sourceDTO);
-        source = sourceRepository.save(source);
-        return new ResponseEntity<>(sourceConverter.toDto(source), HttpStatus.CREATED);
+        Optional<Source> wantedSource = sourceRepository.findByCode(sourceDTO.getCode());
+        if (wantedSource.isPresent()) {
+            return new ResponseEntity<>(sourceConverter.toDto(wantedSource.get()), HttpStatus.OK);
+        } else {
+            Source newAuthor = sourceConverter.toEntity(sourceDTO);
+            newAuthor = sourceRepository.save(newAuthor);
+            return new ResponseEntity<>(sourceConverter.toDto(newAuthor), HttpStatus.CREATED);
+        }
     }
+
+        // Optional<Author> wantedAuthor = authorRepository.findByFullName(authorDTO.getFullName());
+        // if (wantedAuthor.isPresent()) {
+        //     return new ResponseEntity<>(authorConverter.toDto(wantedAuthor.get()), HttpStatus.OK);
+        // } else {
+        //     Author newAuthor = authorConverter.toEntity(authorDTO);
+        //     newAuthor = authorRepository.save(newAuthor);
+        //     return new ResponseEntity<>(authorConverter.toDto(newAuthor), HttpStatus.CREATED);
+        // }
 
     // BAJA
     @PostMapping("/source/{id}/delete")

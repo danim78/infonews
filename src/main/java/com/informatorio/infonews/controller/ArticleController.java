@@ -84,7 +84,7 @@ public class ArticleController {
         }
     }
 
-    // AGREGAR RECURSO A ARTICULO
+    // AGREGAR FUENTE A ARTICULO
     @PostMapping("/article/{idArticle}/source")
     public ResponseEntity<?> addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds) {
         Article article = articleRepository.findById(idArticle).orElse(null);
@@ -103,7 +103,7 @@ public class ArticleController {
     public ResponseEntity<?> findByTitleOrDescriptionOrContentOrFullName(
             @RequestParam(required = false) @Size(min = 3, max = 20) String q,
             @RequestParam(defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(defaultValue = "1") @Positive int size) {
+            @RequestParam(defaultValue = "2") @Positive int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (q != null) {
             Page<Article> articlePage = articleRepository
