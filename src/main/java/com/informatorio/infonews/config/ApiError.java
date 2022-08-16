@@ -2,10 +2,13 @@ package com.informatorio.infonews.config;
 
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 public class ApiError {
     private HttpStatus status;
     private String message;
-    private int ErrorCount;
+    private int errorCount;
+    private List<ApiSubError> subErrors;
 
     public HttpStatus getStatus() {
         return status;
@@ -24,10 +27,18 @@ public class ApiError {
     }
 
     public int getErrorCount() {
-        return ErrorCount;
+        return errorCount;
     }
 
     public void setErrorCount(int errorCount) {
-        ErrorCount = errorCount;
+        this.errorCount = errorCount;
+    }
+
+    public List<ApiSubError> getSubErrors() {
+        return subErrors;
+    }
+
+    public void setSubErrors(List<ApiSubError> subErrors) {
+        this.subErrors = subErrors;
     }
 }
