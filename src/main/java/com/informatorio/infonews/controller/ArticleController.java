@@ -2,10 +2,13 @@ package com.informatorio.infonews.controller;
 
 import com.informatorio.infonews.converter.ArticleConverter;
 import com.informatorio.infonews.domain.Article;
+import com.informatorio.infonews.domain.Author;
 import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.ArticleDTO;
 import com.informatorio.infonews.dto.ArticlePageDTO;
+import com.informatorio.infonews.dto.AuthorDTO;
 import com.informatorio.infonews.repository.ArticleRepository;
+import com.informatorio.infonews.repository.AuthorRepository;
 import com.informatorio.infonews.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,21 +37,30 @@ public class ArticleController {
     private final ArticleRepository articleRepository;
     private final SourceRepository sourceRepository;
     private final ArticleConverter articleConverter;
+    private final AuthorRepository authorRepository;
 
     @Autowired
     public ArticleController(ArticleRepository articleRepository, SourceRepository sourceRepository,
-            ArticleConverter articleConverter) {
+            ArticleConverter articleConverter, AuthorRepository authorRepository) {
         this.articleRepository = articleRepository;
         this.sourceRepository = sourceRepository;
         this.articleConverter = articleConverter;
+        this.authorRepository = authorRepository;
     }
 
     // ALTA
     @PostMapping("/article")
     public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
-        Article article = articleConverter.toEntity(articleDTO);
-        article = articleRepository.save(article);
-        return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
+        AuthorDTO authorDTO = articleDTO.getAuthor();
+        if (authorDTO != null){
+            Optional<Author> author = authorRepository.findByFullName(authorDTO.getFullName());
+            if (author.isPresent()){
+                Article articleToCreate = articleConverter.toEntity(articleDTO);
+                articleToCreate.setAuthor(author.get());
+                Article article = articleRepository.save(articleToCreate);
+                return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
+            } return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // BAJA
@@ -75,6 +87,7 @@ public class ArticleController {
             articleToModify.setUrl(article.getUrl());
             articleToModify.setUrlToImage(article.getUrlToImage());
             articleToModify.setContent(article.getContent());
+            articleToModify.setPublishedAt(article.getPublishedAt());
             articleToModify.setAuthor(article.getAuthor());
             articleToModify.setSources(article.getSource());
             article = articleRepository.save(articleToModify);
@@ -134,25 +147,5 @@ public class ArticleController {
 
             return new ResponseEntity<>(articlePageDTO, HttpStatus.OK);
         }
-        // // OBTENER TODOS LOS AUTORES
-        // @GetMapping("/author/all")
-        // public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0")
-        // @PositiveOrZero int page,
-        // @RequestParam(defaultValue = "5") @Positive int size) {
-        // Pageable pageable = PageRequest.of(page, size);
-        // Page<Author> authorPage = authorRepository.findAll(pageable);
-        // List<AuthorDTO> authorsPageDTO = authorPage.stream()
-        // .map(author -> authorConverter.toDto(author))
-        // .toList();
-        // AuthorPageDTO authorPageDTO = new AuthorPageDTO(authorPage.getNumber(),
-        // authorPage.getSize(),
-        // authorPage.getTotalElements(),
-        // authorPage.getTotalPages(),
-        // authorsPageDTO);
-        // // List<Author> authors = authorRepository.findAll();
-        // // return new ResponseEntity<>(authorConverter.toDto(authors),
-        // HttpStatus.OK);
-        // return new ResponseEntity<>(authorPageDTO, HttpStatus.OK);
-        // }
     }
 }

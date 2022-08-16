@@ -41,15 +41,6 @@ public class SourceController {
         }
     }
 
-        // Optional<Author> wantedAuthor = authorRepository.findByFullName(authorDTO.getFullName());
-        // if (wantedAuthor.isPresent()) {
-        //     return new ResponseEntity<>(authorConverter.toDto(wantedAuthor.get()), HttpStatus.OK);
-        // } else {
-        //     Author newAuthor = authorConverter.toEntity(authorDTO);
-        //     newAuthor = authorRepository.save(newAuthor);
-        //     return new ResponseEntity<>(authorConverter.toDto(newAuthor), HttpStatus.CREATED);
-        // }
-
     // BAJA
     @PostMapping("/source/{id}/delete")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
