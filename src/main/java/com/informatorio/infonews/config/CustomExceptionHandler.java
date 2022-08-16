@@ -14,7 +14,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
             HttpStatus status, WebRequest request) {
-
         ApiError error = new ApiError();
         error.setStatus(status);
         error.setMessage(ex.getMessage());

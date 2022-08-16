@@ -29,6 +29,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,15 +53,17 @@ public class ArticleController {
     @PostMapping("/article")
     public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
         AuthorDTO authorDTO = articleDTO.getAuthor();
-        if (authorDTO != null){
+        if (authorDTO != null) {
             Optional<Author> author = authorRepository.findByFullName(authorDTO.getFullName());
-            if (author.isPresent()){
+            if (author.isPresent()) {
                 Article articleToCreate = articleConverter.toEntity(articleDTO);
                 articleToCreate.setAuthor(author.get());
                 Article article = articleRepository.save(articleToCreate);
                 return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
-            } return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // BAJA
@@ -79,6 +82,15 @@ public class ArticleController {
     @PutMapping("/article/{id}/modify")
     public ResponseEntity<?> modifyById(@PathVariable Long id, @RequestBody @Valid ArticleDTO articleDTO) {
         Optional<Article> wantedArticle = articleRepository.findById(id);
+        Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
+
+        List<Source> wantedSources = articleDTO.getSources().stream()
+                .map(source -> sourceRepository.findById(source.getId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .distinct()
+                .collect(Collectors.toList());
+
         if (wantedArticle.isPresent()) {
             Article articleToModify = wantedArticle.get();
             Article article = articleConverter.toEntity(articleDTO);
@@ -88,8 +100,14 @@ public class ArticleController {
             articleToModify.setUrlToImage(article.getUrlToImage());
             articleToModify.setContent(article.getContent());
             articleToModify.setPublishedAt(article.getPublishedAt());
-            articleToModify.setAuthor(article.getAuthor());
-            articleToModify.setSources(article.getSource());
+            articleToModify.setSources(wantedSources);
+
+            if (wantedAuthor.isPresent()){
+                articleToModify.setAuthor(wantedAuthor.get());
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            
             article = articleRepository.save(articleToModify);
             return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
         } else {
@@ -100,15 +118,20 @@ public class ArticleController {
     // AGREGAR FUENTE A ARTICULO
     @PostMapping("/article/{idArticle}/source")
     public ResponseEntity<?> addSourceToArticle(@PathVariable Long idArticle, @RequestBody List<Long> sourceIds) {
-        Article article = articleRepository.findById(idArticle).orElse(null);
-        List<Source> sources = sourceIds.stream()
-                .map(id -> sourceRepository.findById(id))
+        Optional<Article> article = articleRepository.findById(idArticle);
+        List<Source> sourcesArticle = article.get().getSource();
+        List<Source> sourcesAdd = sourceIds.stream()
+                .map(sourceRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .filter(Predicate.not(sourcesArticle::contains))
+                .distinct()
                 .collect(Collectors.toList());
-        sources.forEach(source -> article.addSource(source));
-        articleRepository.save(article);
-        return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
+
+        Article articleNew = article.get();
+        sourcesAdd.forEach(source -> articleNew.addSource(source));
+        articleRepository.save(articleNew);
+        return new ResponseEntity<>(articleConverter.toDto(articleNew), HttpStatus.ACCEPTED);
     }
 
     // OBTENER TODOS LOS ARTICULOS PUBLICADOS O QUE CONTENGAN STRING
