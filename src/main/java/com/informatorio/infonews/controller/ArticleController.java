@@ -6,7 +6,6 @@ import com.informatorio.infonews.domain.Author;
 import com.informatorio.infonews.domain.Source;
 import com.informatorio.infonews.dto.ArticleDTO;
 import com.informatorio.infonews.dto.ArticlePageDTO;
-import com.informatorio.infonews.dto.AuthorDTO;
 import com.informatorio.infonews.repository.ArticleRepository;
 import com.informatorio.infonews.repository.AuthorRepository;
 import com.informatorio.infonews.repository.SourceRepository;
@@ -52,16 +51,20 @@ public class ArticleController {
     // ALTA
     @PostMapping("/article")
     public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
-        AuthorDTO authorDTO = articleDTO.getAuthor();
-        if (authorDTO != null) {
-            Optional<Author> author = authorRepository.findByFullName(authorDTO.getFullName());
-            if (author.isPresent()) {
-                Article articleToCreate = articleConverter.toEntity(articleDTO);
-                articleToCreate.setAuthor(author.get());
-                Article article = articleRepository.save(articleToCreate);
-                return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
+        List<Source> wantedSources = articleDTO.getSources().stream()
+                .map(source -> sourceRepository.findById(source.getId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (wantedAuthor.isPresent()) {
+            Article newArticle = articleConverter.toEntity(articleDTO);
+            newArticle.setAuthor(wantedAuthor.get());
+            newArticle.setSources(wantedSources);
+            newArticle = articleRepository.save(newArticle);
+            return new ResponseEntity<>(articleConverter.toDto(newArticle), HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -83,7 +86,6 @@ public class ArticleController {
     public ResponseEntity<?> modifyById(@PathVariable Long id, @RequestBody @Valid ArticleDTO articleDTO) {
         Optional<Article> wantedArticle = articleRepository.findById(id);
         Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
-
         List<Source> wantedSources = articleDTO.getSources().stream()
                 .map(source -> sourceRepository.findById(source.getId()))
                 .filter(Optional::isPresent)
@@ -102,12 +104,12 @@ public class ArticleController {
             articleToModify.setPublishedAt(article.getPublishedAt());
             articleToModify.setSources(wantedSources);
 
-            if (wantedAuthor.isPresent()){
+            if (wantedAuthor.isPresent()) {
                 articleToModify.setAuthor(wantedAuthor.get());
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            
+
             article = articleRepository.save(articleToModify);
             return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
         } else {
