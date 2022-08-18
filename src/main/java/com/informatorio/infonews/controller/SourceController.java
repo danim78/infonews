@@ -49,7 +49,7 @@ public class SourceController {
             sourceRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Source no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -65,7 +65,7 @@ public class SourceController {
             source = sourceRepository.save(sourceToModify);
             return new ResponseEntity<>(sourceConverter.toDto(source), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Source no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -76,7 +76,7 @@ public class SourceController {
         if (source.isPresent()) {
             return new ResponseEntity<>(sourceConverter.toDto(source.get()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Source no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -92,7 +92,7 @@ public class SourceController {
     public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 2, max = 20) String str) {
         List<Source> sources = sourceRepository.findByNameContaining(str);
         if (sources.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Source/s no encontrado/s.", HttpStatus.NOT_FOUND);
         } else {
             List<SourceDTO> sourcesDTO = sources.stream().map(source -> sourceConverter.toDto(source))
                     .collect(Collectors.toList());
