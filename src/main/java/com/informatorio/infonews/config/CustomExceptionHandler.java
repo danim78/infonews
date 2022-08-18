@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -51,10 +52,27 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             }
             subErrors.add(new ApiSubError(field, constraintViolations.getMessage()));
         }
-    /*for (ConstraintViolation constraintViolations : ex.getConstraintViolations()){
-        subErrors.add(new ApiSubError(constraintViolations.getPropertyPath().toString(), constraintViolations.getMessage()));
-    }*/
     error.setSubErrors(subErrors);
     return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex){
+        ApiError error = new ApiError();
+        error.setStatus(HttpStatus.NOT_FOUND);
+        error.setMessage("Element not found");
+        error.setErrorCount(error.getErrorCount()+1);
+
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException ex){
+        ApiError error = new ApiError();
+        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        error.setMessage(ex.getMessage());
+        error.setErrorCount(error.getErrorCount()+1);
+
+        return new ResponseEntity<>(error, error.getStatus());
     }
 }

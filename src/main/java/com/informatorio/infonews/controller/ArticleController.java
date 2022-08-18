@@ -61,9 +61,9 @@ public class ArticleController {
                 Article article = articleRepository.save(articleToCreate);
                 return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.CREATED);
             }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Author no encontrado",HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Campo author no puede estar vacío",HttpStatus.I_AM_A_TEAPOT);
     }
 
     // BAJA
