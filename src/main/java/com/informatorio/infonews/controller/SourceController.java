@@ -41,15 +41,6 @@ public class SourceController {
         }
     }
 
-        // Optional<Author> wantedAuthor = authorRepository.findByFullName(authorDTO.getFullName());
-        // if (wantedAuthor.isPresent()) {
-        //     return new ResponseEntity<>(authorConverter.toDto(wantedAuthor.get()), HttpStatus.OK);
-        // } else {
-        //     Author newAuthor = authorConverter.toEntity(authorDTO);
-        //     newAuthor = authorRepository.save(newAuthor);
-        //     return new ResponseEntity<>(authorConverter.toDto(newAuthor), HttpStatus.CREATED);
-        // }
-
     // BAJA
     @PostMapping("/source/{id}/delete")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
@@ -96,9 +87,9 @@ public class SourceController {
         return new ResponseEntity<>(sourceConverter.toDto(sources), HttpStatus.OK);
     }
 
-    // OBTENER LOS AUTORES CUYO FULLNAME CONTENGAN UN STRING
+    // OBTENER LOS SOURCES CUYO FULLNAME CONTENGAN UN STRING
     @GetMapping("/source/all/name")
-    public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 3, max = 20) String str) {
+    public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 2, max = 20) String str) {
         List<Source> sources = sourceRepository.findByNameContaining(str);
         if (sources.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

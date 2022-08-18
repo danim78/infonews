@@ -2,9 +2,7 @@ package com.informatorio.infonews.dto;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class AuthorDTO {
     private Long id;
@@ -14,8 +12,6 @@ public class AuthorDTO {
     private String lastName;
     private String fullName;
     private LocalDate createdAt = LocalDate.now();
-
-    private Set<ArticleDTO> articles = new HashSet<>();
 
     public AuthorDTO(Long id, String firstName, String lastName, String fullName, LocalDate createdAt) {
         this.id = id;
