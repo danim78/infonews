@@ -58,7 +58,7 @@ public class AuthorController {
             authorRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -73,9 +73,9 @@ public class AuthorController {
             authorToModify.setLastName(author.getLastName());
             authorToModify.setFullName(author.getFullName());
             author = authorRepository.save(authorToModify);
-            return new ResponseEntity<>(authorConverter.toDto(author), HttpStatus.OK);
+            return new ResponseEntity<>(authorConverter.toDto(author), HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -86,7 +86,7 @@ public class AuthorController {
         if (author.isPresent()) {
             return new ResponseEntity<>(authorConverter.toDto(author.get()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -104,8 +104,6 @@ public class AuthorController {
                 authorPage.getTotalElements(),
                 authorPage.getTotalPages(),
                 authorsPageDTO);
-        // List<Author> authors = authorRepository.findAll();
-        // return new ResponseEntity<>(authorConverter.toDto(authors), HttpStatus.OK);
         return new ResponseEntity<>(authorPageDTO, HttpStatus.OK);
     }
 
@@ -115,7 +113,7 @@ public class AuthorController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PastOrPresent LocalDate date) {
         List<Author> authors = authorRepository.findByCreatedAtGreaterThanEqual(date);
         if (authors.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor/es no encontrado/s.", HttpStatus.NOT_FOUND);
         } else {
             List<AuthorDTO> authorsDTO = authors.stream().map(author -> authorConverter.toDto(author))
                     .collect(Collectors.toList());
@@ -128,7 +126,7 @@ public class AuthorController {
     public ResponseEntity<?> findByFullName(@RequestParam @Size(min = 3, max = 20) String q) {
         List<Author> authors = authorRepository.findByFullNameContaining(q);
         if (authors.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor/es no encontrado/s.", HttpStatus.NOT_FOUND);
         } else {
             List<AuthorDTO> authorsDTO = authors.stream().map(author -> authorConverter.toDto(author))
                     .collect(Collectors.toList());

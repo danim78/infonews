@@ -51,6 +51,7 @@ public class ArticleController {
     // ALTA
     @PostMapping("/article")
     public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
+
         Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
         List<Source> wantedSources = articleDTO.getSources().stream()
                 .map(source -> sourceRepository.findById(source.getId()))
@@ -66,7 +67,7 @@ public class ArticleController {
             newArticle = articleRepository.save(newArticle);
             return new ResponseEntity<>(articleConverter.toDto(newArticle), HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Author no puede estar vacío.", HttpStatus.BAD_REQUEST);
     }
 
     // BAJA
@@ -77,7 +78,7 @@ public class ArticleController {
             articleRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Articulo no encontrado.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -85,7 +86,7 @@ public class ArticleController {
     @PutMapping("/article/{id}/modify")
     public ResponseEntity<?> modifyById(@PathVariable Long id, @RequestBody @Valid ArticleDTO articleDTO) {
         Optional<Article> wantedArticle = articleRepository.findById(id);
-        Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
+
         List<Source> wantedSources = articleDTO.getSources().stream()
                 .map(source -> sourceRepository.findById(source.getId()))
                 .filter(Optional::isPresent)
@@ -93,27 +94,37 @@ public class ArticleController {
                 .distinct()
                 .collect(Collectors.toList());
 
-        if (wantedArticle.isPresent()) {
-            Article articleToModify = wantedArticle.get();
-            Article article = articleConverter.toEntity(articleDTO);
-            articleToModify.setTitle(article.getTitle());
-            articleToModify.setDescription(article.getDescription());
-            articleToModify.setUrl(article.getUrl());
-            articleToModify.setUrlToImage(article.getUrlToImage());
-            articleToModify.setContent(article.getContent());
-            articleToModify.setPublishedAt(article.getPublishedAt());
-            articleToModify.setSources(wantedSources);
 
-            if (wantedAuthor.isPresent()) {
-                articleToModify.setAuthor(wantedAuthor.get());
+        if (articleDTO.getAuthor() != null) {
+            Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
+
+            if (wantedArticle.isPresent()) {
+                Article articleToModify = wantedArticle.get();
+                Article article = articleConverter.toEntity(articleDTO);
+                articleToModify.setTitle(article.getTitle());
+                articleToModify.setDescription(article.getDescription());
+                articleToModify.setUrl(article.getUrl());
+                articleToModify.setUrlToImage(article.getUrlToImage());
+                articleToModify.setContent(article.getContent());
+                articleToModify.setPublishedAt(article.getPublishedAt());
+                articleToModify.setSources(wantedSources);
+
+                if (wantedAuthor.isPresent()) {
+                    articleToModify.setAuthor(wantedAuthor.get());
+                } else {
+                    return new ResponseEntity<>("Autor no encontrado.", HttpStatus.NOT_FOUND);
+                }
+
+                article = articleRepository.save(articleToModify);
+                return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
+
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Articulo no encontrado.", HttpStatus.NOT_FOUND);
             }
 
-            article = articleRepository.save(articleToModify);
-            return new ResponseEntity<>(articleConverter.toDto(article), HttpStatus.ACCEPTED);
+
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Autor no puede estar vacío.", HttpStatus.BAD_REQUEST);
         }
     }
 
