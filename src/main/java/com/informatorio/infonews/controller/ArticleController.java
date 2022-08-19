@@ -51,23 +51,26 @@ public class ArticleController {
     // ALTA
     @PostMapping("/article")
     public ResponseEntity<?> createArticle(@RequestBody @Valid ArticleDTO articleDTO) {
+        if (articleDTO.getAuthor() != null) {
+            Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
+            List<Source> wantedSources = articleDTO.getSources().stream()
+                    .map(source -> sourceRepository.findById(source.getId()))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .distinct()
+                    .collect(Collectors.toList());
 
-        Optional<Author> wantedAuthor = authorRepository.findByFullName(articleDTO.getAuthor().getFullName());
-        List<Source> wantedSources = articleDTO.getSources().stream()
-                .map(source -> sourceRepository.findById(source.getId()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .distinct()
-                .collect(Collectors.toList());
-
-        if (wantedAuthor.isPresent()) {
-            Article newArticle = articleConverter.toEntity(articleDTO);
-            newArticle.setAuthor(wantedAuthor.get());
-            newArticle.setSources(wantedSources);
-            newArticle = articleRepository.save(newArticle);
-            return new ResponseEntity<>(articleConverter.toDto(newArticle), HttpStatus.CREATED);
+            if (wantedAuthor.isPresent()) {
+                Article newArticle = articleConverter.toEntity(articleDTO);
+                newArticle.setAuthor(wantedAuthor.get());
+                newArticle.setSources(wantedSources);
+                newArticle = articleRepository.save(newArticle);
+                return new ResponseEntity<>(articleConverter.toDto(newArticle), HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>("Autor no encontrado.", HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>("Autor no puede estar vacio.", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Author no puede estar vacío.", HttpStatus.BAD_REQUEST);
     }
 
     // BAJA
